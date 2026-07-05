@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>エコー・シューター</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="stage">
+      <canvas id="game" width="480" height="720"></canvas>
+
+      <div class="hud">
+        <div class="hud-row">
+          <span id="hud-score">SCORE: 0</span>
+          <span id="hud-wave">WAVE: 1 / 6</span>
+        </div>
+        <div class="hud-row" id="hud-hp"></div>
+        <div class="hud-row hud-echoes" id="hud-echoes"></div>
+      </div>
+
+      <div class="overlay" id="overlay">
+        <h1>ECHO SHOOTER</h1>
+        <p class="lead">あなたの数秒前の行動が「エコー」となって再生され、一緒に戦います。</p>
+        <ul class="rules">
+          <li>移動: 矢印キー / WASD　　射撃: Space または Z（押しっぱなしで連射）</li>
+          <li>数秒後、今の動きと射撃をそのまま再現する半透明のエコー自機が出現します</li>
+          <li>エコーは無敵。未来の自分がどこを援護するか考えながら立ち回りましょう</li>
+          <li>ウェーブが進むと2機目のエコー（別ディレイ）が解禁されます</li>
+        </ul>
+        <p class="prompt" id="overlay-prompt">Press SPACE / ENTER to start</p>
+      </div>
+    </main>
+
+    <p class="back-link"><a href="../index.html">&larr; トップに戻る</a></p>
+
+    <script src="game.js"></script>
+  </body>
+</html>
