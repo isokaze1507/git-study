@@ -128,7 +128,7 @@
   function resetGame() {
     player = { x: WIDTH / 2, y: HEIGHT - 90, hp: 5, fireCooldown: 0 };
     history = [];
-    echoes = ECHO_DEFS.map((def) => ({ def, x: player.x, y: player.y, active: false }));
+    echoes = ECHO_DEFS.map((def) => ({ def, x: player.x, y: player.y, active: false, unlockFrame: null }));
     bullets = [];
     enemyBullets = [];
     enemies = [];
@@ -158,6 +158,10 @@
     }
   });
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
+  window.addEventListener("blur", () => keys.clear());
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) keys.clear();
+  });
 
   function startGame() {
     resetGame();
@@ -185,7 +189,7 @@
     if (hitFlash > 0) hitFlash -= dt;
     if (invuln > 0) invuln -= dt;
 
-    if (player.hp <= 0) {
+    if (player.hp <= 0 && state === "playing") {
       state = "gameover";
       showOverlay("GAME OVER", `SCORE: ${score}`, "Press SPACE / ENTER to retry");
     }
@@ -233,11 +237,13 @@
       const unlocked = waveIndex >= echo.def.unlockWave;
       if (!unlocked) {
         echo.active = false;
+        echo.unlockFrame = null;
         continue;
       }
+      if (echo.unlockFrame === null) echo.unlockFrame = history.length;
       const delayFrames = Math.round(echo.def.delay / STEP);
       const idx = history.length - 1 - delayFrames;
-      if (idx < 0) {
+      if (idx < echo.unlockFrame) {
         echo.active = false;
         continue;
       }
@@ -534,7 +540,9 @@
           span.textContent = `${echo.def.label}: locked`;
         } else if (!echo.active) {
           const delayFrames = Math.round(echo.def.delay / STEP);
-          const remain = Math.max(0, (delayFrames - history.length) * STEP);
+          const unlockFrame = echo.unlockFrame ?? history.length;
+          const remainFrames = unlockFrame + delayFrames + 1 - history.length;
+          const remain = Math.max(0, remainFrames * STEP);
           span.textContent = `${echo.def.label}: incoming ${remain.toFixed(1)}s`;
         } else {
           span.textContent = `${echo.def.label}: active`;
